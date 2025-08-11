@@ -1,0 +1,2 @@
+# KeynesianBeautyContest
+King of Diamond♦️
