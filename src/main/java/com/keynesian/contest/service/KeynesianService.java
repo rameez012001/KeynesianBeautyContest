@@ -1,18 +1,21 @@
 package com.keynesian.contest.service;
 
+import com.keynesian.contest.entity.Game;
 import com.keynesian.contest.entity.Player;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Service
 public class KeynesianService {
     private Random random = new Random();
     Map<Integer, Player> players = new HashMap<>();
 
-    public void initializePlayers(int numberOfPlayers) {
+    public void initializePlayers(Game game) {
         players.clear();
-        for (int i = 0; i < numberOfPlayers; i++) {
-            int randomNumber = random.nextInt(101);
-            players.put(i, new Player("Player" + i, 0, randomNumber));
+        int i = 0;
+        for (Player player : game.getPlayers()) {
+            players.put(i++, player);
         }
     }
 

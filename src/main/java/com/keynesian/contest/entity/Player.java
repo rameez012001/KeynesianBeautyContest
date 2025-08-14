@@ -1,14 +1,21 @@
 package com.keynesian.contest.entity;
 
 public class Player {
+    private Long id;
     private String name;
     private int score;
     private int number;
 
-    public Player(String name, int score, int number) {
+    public Player(String name) {
         this.name = name;
-        this.score = score;
-        this.number = number;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {

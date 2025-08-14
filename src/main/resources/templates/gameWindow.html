@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Keynesian Beauty Contest</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        #numbers {
+            display: grid;
+            grid-template-columns: repeat(10, 50px);
+            gap: 0;
+            justify-content: start;
+        }
+        button.number {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 0;
+            padding: 10px;
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .number:nth-child(even) {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+
+<body>
+<div id="numbers"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script th:inline="javascript">
+    const element = document.getElementById("numbers");
+    for (let index = 0; index <= 100; index++) {
+        const button = document.createElement("button");
+        button.value = index;
+        button.textContent = index;
+        button.className = "number";
+        element.appendChild(button);
+    }
+    let stompClient = null;
+    const gameId = [[${game.id}]];
+
+    function connect() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, () => {
+            // Subscribe to game updates
+            stompClient.subscribe(`/topic/game/${gameId}`, (message) => {
+                const update = JSON.parse(message.body);
+                console.log("Game update:", update);
+            });
+        });
+    }
+
+    function sendChoice(number) {
+        stompClient.send(`/app/game/${gameId}/choose`, {}, JSON.stringify({ number }));
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        connect();
+        document.querySelectorAll(".number").forEach(button => {
+            button.addEventListener("click", () => {
+                sendChoice(parseInt(button.value));
+            });
+        });
+    });
+</script>
+</body>
+</html>
